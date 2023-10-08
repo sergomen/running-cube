@@ -30,7 +30,7 @@ camera.position.set(4.61, 2.74, 8)
 
 const orbit = new OrbitControls(camera, renderer.domElement)
 orbit.update()
-OrbitControls.enabled = false
+orbit.enabled = false
 
 class Box extends THREE.Mesh {
   constructor({ width, height, depth, color = '#00FF00', 
