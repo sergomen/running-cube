@@ -5,6 +5,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 // import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
+import nipplejs from 'nipplejs'
+
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
   antialias: true,
@@ -220,6 +222,30 @@ window.addEventListener('keyup', (event) => {
       break
   }
 })
+
+let touchstartX = 0
+let touchendX = 0
+    
+function checkDirection() {
+  if (touchendX < touchstartX) keys.a.pressed = true
+  
+  if (touchendX > touchstartX) keys.d.pressed = true
+}
+
+document.addEventListener('touchstart', e => {
+  touchstartX = e.changedTouches[0].screenX
+})
+
+document.addEventListener('touchend', e => {
+  touchendX = e.changedTouches[0].screenX
+  checkDirection()
+})
+
+// var options = {
+//   zone: document.getElementById('joystick-zone')
+// }
+// var manager = nipplejs.create(options)
+
 
 
 const enemies = []

@@ -4,3 +4,9 @@ canvas {
   top: 0;
   background: #0c4a6e;
 }
+
+joystick-zone {
+  position: absolute;
+  left: 0;
+  top: 0
+}
