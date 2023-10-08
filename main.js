@@ -225,19 +225,60 @@ window.addEventListener('keyup', (event) => {
 
 let touchstartX = 0
 let touchendX = 0
+let touchstartZ = 0
+let touchendZ = 0
+
+let leftside = false
+let rightside = false
+let stop = false
     
 function checkDirection() {
-  if (touchendX < touchstartX) keys.a.pressed = true
+  if (stop) {
+    leftside = false
+    rightside = false
+    console.log("stop")
+  }
+  else if (touchendX < touchstartX) {
+  console.log("left")
+  leftside = true
+  rightside = false
+  }
+  // keys.a.pressed = true
   
-  if (touchendX > touchstartX) keys.d.pressed = true
+  else if (touchendX > touchstartX) {
+  // keys.d.pressed = true
+  leftside = false
+  rightside = true
+  console.log("right")
+  }
+
+  if (touchendZ > touchstartZ) keys.w.pressed = true
+  else if (touchendZ > touchstartZ) keys.s.pressed = true
 }
 
 document.addEventListener('touchstart', e => {
+  stop = false
   touchstartX = e.changedTouches[0].screenX
 })
 
-document.addEventListener('touchend', e => {
+document.addEventListener('touchmove', e => {
+  stop = false
   touchendX = e.changedTouches[0].screenX
+  checkDirection()
+})
+
+document.addEventListener('touchend', e => {
+  stop = true
+  // console.log("stop")
+  checkDirection()
+})
+
+document.addEventListener('touchstart', e => {
+  touchstartZ = e.changedTouches[0].screenZ
+})
+
+document.addEventListener('touchend', e => {
+  touchendZ = e.changedTouches[0].screenZ
   checkDirection()
 })
 
@@ -263,6 +304,10 @@ function animate() {
   else if (keys.d.pressed) cube.velocity.x = 0.08
   if (keys.w.pressed) cube.velocity.z = -0.08
   else if (keys.s.pressed) cube.velocity.z = 0.08
+
+  if (leftside) cube.velocity.x = -0.05
+  else if (rightside) cube.velocity.x = 0.05
+  else if (stop) cube.velocity.x = 0
 
   cube.update(ground)
   enemies.forEach((enemy) => {
