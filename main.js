@@ -25,7 +25,7 @@ const camera = new THREE.PerspectiveCamera(
 )
 
 // camera.position.z = 5
-camera.position.set(1.61, 18.74, 38)
+camera.position.set(6.61, 8.74, 28)
 
 const orbit = new OrbitControls(camera, renderer.domElement)
 orbit.update()
@@ -227,6 +227,7 @@ let touchstartX = 0
 let touchendX = 0
 let touchstartZ = 0
 let touchendZ = 0
+let lastClick = 0;
 
 const swipes = {
   left: {
@@ -306,7 +307,16 @@ document.addEventListener('touchstart', e => {
   stop = false
   touchstartX = e.changedTouches[0].screenX
   touchstartZ = e.changedTouches[0].screenY
-  if (e.targetTouches.length === 2) cube.velocity.y = 0.08
+  // if (e.targetTouches.length === 2) cube.velocity.y = 0.08
+  // e.preventDefault(); // to disable browser default zoom on double tap
+  let date = new Date();
+  let time = date.getTime();
+  const time_between_taps = 200; // 200ms
+  if (time - lastClick < time_between_taps) {
+    // do stuff
+    cube.velocity.y = 0.08
+  }
+  lastClick = time;
   // touchstartZ = e.changedTouches[0].screenZ
 })
 
@@ -379,6 +389,10 @@ function animate() {
       })
     ) {
       cancelAnimationFrame(animationId)
+      var result = confirm("Game, как говорится, Over. Do you want to play again?")
+      if (result == true)
+        location.reload()
+      else return
     }
   })
 
