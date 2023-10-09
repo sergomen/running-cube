@@ -25,7 +25,7 @@ const camera = new THREE.PerspectiveCamera(
 )
 
 // camera.position.z = 5
-camera.position.set(4.61, 2.74, 8)
+camera.position.set(1.61, 18.74, 38)
 
 const orbit = new OrbitControls(camera, renderer.domElement)
 orbit.update()
@@ -228,100 +228,123 @@ let touchendX = 0
 let touchstartZ = 0
 let touchendZ = 0
 
-let leftside = false
-let rightside = false
-let stop = false
-let forwardside = false
-let backside = false
-    
+const swipes = {
+  left: {
+    pressed: false
+  },
+  right: {
+    pressed: false
+  },
+  forward: {
+    pressed: false
+  },
+  back: {
+    pressed: false
+  }
+}
+// let leftswipe = false
+// let rightswipe = false
+// let stopswipe = false
+// let forwardswipe = false
+// let backswipe = false
+  
 function checkDirection() {
   if (stop) {
-    leftside = false
-    rightside = false
-    forwardside = false
-    backside = false
-    console.log("stop")
+    swipes.left.pressed = false
+    swipes.right.pressed = false
+    swipes.forward.pressed = false
+    swipes.back.pressed = false
+    // console.log("stop")
   }
   else if (touchendX < touchstartX) {
-  console.log("left")
-  leftside = true
-  rightside = false
+    // console.log("left")
+    swipes.left.pressed = true
+    swipes.right.pressed = false
+    // leftside = true
+    // rightside = false
   }
   // keys.a.pressed = true
   
   else if (touchendX > touchstartX) {
   // keys.d.pressed = true
-  leftside = false
-  rightside = true
-  console.log("right")
+    swipes.left.pressed = false
+    swipes.right.pressed = true
+    
+    // leftside = false
+    // rightside = true
+    // console.log("right")
   }
 
   if (stop) {
-    leftside = false
-    rightside = false
-    forwardside = false
-    backside = false
-    console.log("stop")
+  //   // leftside = false
+  //   // rightside = false
+  //   // forwardside = false
+  //   // backside = false
+  //   // console.log("stop")
+    swipes.left.pressed = false
+    swipes.right.pressed = false
+    swipes.forward.pressed = false
+    swipes.back.pressed = false
   }
   else if (touchendZ > touchstartZ) {
     
-    forwardside = true
-    backside = false
-    console.log("back")
+    swipes.forward.pressed = true
+    swipes.back.pressed = false
+    // backside = false
+    // console.log("back")
   }
-
   else if (touchendZ < touchstartZ) {
     // keys.d.pressed = true
-    forwardside = false
-    backside = true
-    console.log("forward")
+    // forwardside = false
+    swipes.forward.pressed = false
+    swipes.back.pressed = true
+    // console.log("forward")
   }
 }
 
 document.addEventListener('touchstart', e => {
   stop = false
   touchstartX = e.changedTouches[0].screenX
+  touchstartZ = e.changedTouches[0].screenY
+  if (e.targetTouches.length === 2) cube.velocity.y = 0.08
   // touchstartZ = e.changedTouches[0].screenZ
 })
 
 document.addEventListener('touchmove', e => {
   stop = false
   touchendX = e.changedTouches[0].screenX
-  // touchendZ = e.changedTouches[0].screenZ
+  touchendZ = e.changedTouches[0].screenY
+// //   // touchendZ = e.changedTouches[0].screenZ
   checkDirection()
 })
 
 document.addEventListener('touchend', e => {
   stop = true
+  // stop = false
+  touchendX = e.changedTouches[0].screenX
+  touchendZ = e.changedTouches[0].screenY
   // console.log("stop")
   checkDirection()
 })
 
 ///
 
-document.addEventListener('touchstart', e => {
-  stop = false
-  touchstartZ = e.changedTouches[0].screenY
-})
+// document.addEventListener('touchstart', e => {
+//   // stop = false
+//   touchstartZ = e.changedTouches[0].screenY
+// })
 
-document.addEventListener('touchmove', e => {
-  stop = false
-  touchendZ = e.changedTouches[0].screenY
-  checkDirection()
-})
+// document.addEventListener('touchmove', e => {
+//   // stop = false
+//   touchendZ = e.changedTouches[0].screenY
+//   checkDirection()
+// })
 
-document.addEventListener('touchend', e => {
-  stop = true
-  touchendZ = e.changedTouches[0].screenY
-  checkDirection()
-})
-
-// var options = {
-//   zone: document.getElementById('joystick-zone')
-// }
-// var manager = nipplejs.create(options)
-
-
+// document.addEventListener('touchend', e => {
+//   stop = true
+//   touchendZ = e.changedTouches[0].screenY
+//   checkDirection()
+// })
 
 const enemies = []
 let frames = 0
@@ -339,12 +362,12 @@ function animate() {
   if (keys.w.pressed) cube.velocity.z = -0.08
   else if (keys.s.pressed) cube.velocity.z = 0.08
 
-  if (leftside) cube.velocity.x = -0.05
-  else if (rightside) cube.velocity.x = 0.05
-  else if (stop) cube.velocity.x = 0
-  if (forwardside) cube.velocity.z = 0.05
-  else if (backside) cube.velocity.z = -0.05
-  else if (stop) cube.velocity.z = 0
+  if (swipes.left.pressed) cube.velocity.x = -0.08
+  else if (swipes.right.pressed) cube.velocity.x = 0.08
+  // else if (stop) cube.velocity.x = 0
+  if (swipes.forward.pressed) cube.velocity.z = 0.08
+  else if (swipes.back.pressed) cube.velocity.z = -0.08
+  // else if (stop) cube.velocity.z = 0
 
   cube.update(ground)
   enemies.forEach((enemy) => {
@@ -360,7 +383,7 @@ function animate() {
   })
 
   if (frames % spawnRate === 0) {
-    if (spawnRate > 20) spawnRate -= 20
+    if (spawnRate > 20) spawnRate -= 10
 
       const enemy = new Box({
         width: 1,
