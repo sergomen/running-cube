@@ -5,7 +5,6 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 // import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
-import nipplejs from 'nipplejs'
 
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
@@ -232,11 +231,15 @@ let touchendZ = 0
 let leftside = false
 let rightside = false
 let stop = false
+let forwardside = false
+let backside = false
     
 function checkDirection() {
   if (stop) {
     leftside = false
     rightside = false
+    forwardside = false
+    backside = false
     console.log("stop")
   }
   else if (touchendX < touchstartX) {
@@ -253,18 +256,38 @@ function checkDirection() {
   console.log("right")
   }
 
-  if (touchendZ > touchstartZ) keys.w.pressed = true
-  else if (touchendZ > touchstartZ) keys.s.pressed = true
+  if (stop) {
+    leftside = false
+    rightside = false
+    forwardside = false
+    backside = false
+    console.log("stop")
+  }
+  else if (touchendZ > touchstartZ) {
+    
+    forwardside = true
+    backside = false
+    console.log("back")
+  }
+
+  else if (touchendZ < touchstartZ) {
+    // keys.d.pressed = true
+    forwardside = false
+    backside = true
+    console.log("forward")
+  }
 }
 
 document.addEventListener('touchstart', e => {
   stop = false
   touchstartX = e.changedTouches[0].screenX
+  // touchstartZ = e.changedTouches[0].screenZ
 })
 
 document.addEventListener('touchmove', e => {
   stop = false
   touchendX = e.changedTouches[0].screenX
+  // touchendZ = e.changedTouches[0].screenZ
   checkDirection()
 })
 
@@ -274,12 +297,22 @@ document.addEventListener('touchend', e => {
   checkDirection()
 })
 
+///
+
 document.addEventListener('touchstart', e => {
-  touchstartZ = e.changedTouches[0].screenZ
+  stop = false
+  touchstartZ = e.changedTouches[0].screenY
+})
+
+document.addEventListener('touchmove', e => {
+  stop = false
+  touchendZ = e.changedTouches[0].screenY
+  checkDirection()
 })
 
 document.addEventListener('touchend', e => {
-  touchendZ = e.changedTouches[0].screenZ
+  stop = true
+  touchendZ = e.changedTouches[0].screenY
   checkDirection()
 })
 
@@ -309,6 +342,9 @@ function animate() {
   if (leftside) cube.velocity.x = -0.05
   else if (rightside) cube.velocity.x = 0.05
   else if (stop) cube.velocity.x = 0
+  if (forwardside) cube.velocity.z = 0.05
+  else if (backside) cube.velocity.z = -0.05
+  else if (stop) cube.velocity.z = 0
 
   cube.update(ground)
   enemies.forEach((enemy) => {
